@@ -4,8 +4,8 @@ import { configSchematics } from "./configSchematics";
 import * as dotenv from "dotenv";
 import * as path from "path";
 
-// Load environment variables from parent directory
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+// Load environment variables from the plugin root directory
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 interface DeepSearchResult {
   title: string;
@@ -49,16 +49,7 @@ export async function toolsProvider(ctl: ToolsProviderController) {
 
       The search supports various parameters to customize results:
       - query: Your search query
-      - search_type: "web" (default), "proprietary", or "all"
       - max_results: Number of results to return
-      - included_sources: Specific sources to search (optional)
-
-      IMPORTANT: Only use valyu_contents when:
-      - You need the FULL content of a specific URL that was found in search results
-      - The user explicitly provides a URL and asks for its content
-      - You need more detail than what's provided in the search snippet
-
-      Do NOT suggest using valyu_contents unless actually needed.
     `,
     parameters: {
       query: z.string().describe("The search query"),
@@ -105,22 +96,32 @@ export async function toolsProvider(ctl: ToolsProviderController) {
         const results: DeepSearchResult[] = data.results.map((result: any) => {
           // Log to see what fields the API actually returns
           console.log('Valyu API result fields:', Object.keys(result));
-          console.log('Snippet length from API:', result.snippet?.length);
-          console.log('Content length from API:', result.content?.length);
-          console.log('Text length from API:', result.text?.length);
+          console.log('Content type from API:', typeof result.content);
 
-          // Use ALL available content fields without ANY truncation
-          const content = result.content || result.text || result.snippet || result.description || result.full_text || result.body || "";
+          // Handle content - it might be a string or an object (for financial data)
+          let content = "";
 
-          // If the API itself truncated (ends with ...), note that
-          if (content.endsWith('...')) {
+          if (result.content) {
+            if (typeof result.content === 'string') {
+              content = result.content;
+            } else if (typeof result.content === 'object') {
+              // For financial data or structured content, convert to JSON string
+              content = JSON.stringify(result.content, null, 2);
+            }
+          } else {
+            // Fallback to other fields if content is not available
+            content = result.text || result.snippet || result.description || result.full_text || result.body || "";
+          }
+
+          // Only check for truncation if content is a string
+          if (typeof content === 'string' && content.endsWith('...')) {
             console.log('Note: Content was already truncated by Valyu API');
           }
 
           return {
             title: result.title || "Untitled",
             url: result.url || "",
-            snippet: content,  // NO TRUNCATION - show everything the API returns
+            snippet: content,  // Will be string (either original or JSON stringified)
             relevance_score: result.relevance_score,
             author: result.author,
             published_date: result.published_date,
