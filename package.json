@@ -1,0 +1,20 @@
+{
+  "name": "lms-plugin-valyu",
+  "version": "1.0.0",
+  "description": "Valyu DeepSearch and Contents API plugin for LMStudio",
+  "main": "index.js",
+  "scripts": {
+    "dev": "lms dev",
+    "push": "lms push"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@lmstudio/sdk": "1.4.0",
+    "zod": "3.24.1",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.8"
+  }
+}
