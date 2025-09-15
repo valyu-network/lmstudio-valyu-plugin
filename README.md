@@ -58,6 +58,16 @@ That's it! The script will:
 
 Follow the instructions at the end.
 
+### After Running setup.sh
+
+Once the plugin is running, you'll see the Valyu tool automatically appear in your LMStudio chat:
+
+<div align="center">
+<img src="assets/tool.png" alt="Valyu tool in LMStudio" width="300"/>
+<br>
+<i>The 'valyu' tool appears alongside other tools like 'Think' - ready to fetch real-time data!</i>
+</div>
+
 ### Manual Installation (if setup.sh doesn't work)
 
 <details>
