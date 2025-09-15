@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="assets/lmstudioXvalyu.png" alt="LMStudio x Valyu" width="100%"/>
+</div>
+
 # Valyu Plugin for LMStudio
 
 Gives your local LLMs access to web search and content extraction powered by [Valyu's API](https://valyu.network/).
