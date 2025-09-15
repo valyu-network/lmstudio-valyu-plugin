@@ -1,232 +1,118 @@
 # Valyu Plugin for LMStudio
 
-A powerful LMStudio plugin that integrates Valyu's DeepSearch and Contents API, giving your local LLMs access to the web, and more.
+Gives your local LLMs access to web search and content extraction powered by [Valyu's API](https://valyu.network/).
 
-## 🌟 What is This?
+## 🎯 See the Difference
 
-This plugin extends [LMStudio](https://lmstudio.ai/) - a desktop application for running Large Language Models locally - with advanced search capabilities powered by [Valyu's API](https://valyu.network/). It enables your local AI models to search the web, access academic papers, retrieve financial data, and extract content from any webpage.
+### Example 1: Real-Time Financial Data
+<table>
+<tr>
+<td align="center"><b>✅ With Valyu Plugin</b></td>
+<td align="center"><b>❌ Without Valyu Plugin</b></td>
+</tr>
+<tr>
+<td><img src="assets/withValyu.png" alt="With Valyu - Real-time stock data" width="400"/></td>
+<td><img src="assets/withoutValyu.png" alt="Without Valyu - No real data" width="400"/></td>
+</tr>
+<tr>
+<td>✨ Real-time Apple stock prices<br>📊 Actual financial data from September 2025<br>🎯 Precise daily closing prices</td>
+<td>❓ Can't access current data<br>📚 Only suggests where to look<br>⏰ No real-time information</td>
+</tr>
+</table>
 
-## ✨ Features
+### Example 2: Latest Research & Developments
+<table>
+<tr>
+<td align="center"><b>✅ With Valyu Plugin</b></td>
+<td align="center"><b>❌ Without Valyu Plugin</b></td>
+</tr>
+<tr>
+<td><img src="assets/withValyu2.png" alt="With Valyu - Current research" width="400"/></td>
+<td><img src="assets/withoutValyu2.png" alt="Without Valyu - Outdated info" width="400"/></td>
+</tr>
+<tr>
+<td>🔬 Latest quantum computing breakthroughs<br>📰 Real news from September 2025<br>🌐 Access to current research papers</td>
+<td>📅 Stuck in 2023-2024 (knowledge cutoff)<br>🤔 Makes up plausible-sounding info<br>❌ No access to recent developments</td>
+</tr>
+</table>
 
-### DeepSearch API (`valyu_deepsearch`)
-- 🔍 Search across web, academic papers, financial data, and more
-- 📊 Real-time content retrieval with relevance scoring
-- 📚 Support for proprietary and open-access content
-- 🖼️ Multi-modal content (text, images, tables)
-- ⚙️ Configurable search parameters
+**Transform your local LLM from a knowledge cutoff prisoner to a real-time information powerhouse!** The Valyu plugin bridges the gap between your local AI and the live web, giving you access to current stock prices, latest news, academic papers, and any webpage content - all while keeping your LLM running locally.
 
-### Contents API (`valyu_contents`)
-- 📄 Extract full content from web pages
-- 📝 Retrieve metadata (author, date, description)
-- 🧹 Clean, structured content extraction
-- 📏 Adjustable response length
-
-## 🚀 Quick Installation (What Actually Works!)
-
-The key to getting the Valyu plugin working in LMStudio is to **copy it directly to the extensions folder**.
+## 🚀 Quick Setup (2 minutes)
 
 ### Prerequisites
+- [LMStudio](https://lmstudio.ai/) installed
+- Valyu API key from [platform.valyu.network](https://platform.valyu.network/) (free tier available)
 
-- [LMStudio](https://lmstudio.ai/) installed on your machine
-- Node.js (comes with LMStudio)
-- A Valyu API key from [platform.valyu.network](https://platform.valyu.network/)
-
-### Step 1: Prepare the Plugin
-
-1. **Clone this repository**:
-   ```bash
-   git clone [repository-url]
-   cd valyu
-   ```
-
-2. **Set up your API key** in a `.env` file in the parent directory:
-   ```bash
-   # Create .env in the lmstudio folder (parent of valyu)
-   echo "VALYU_API_KEY=your_api_key_here" > ../.env
-   ```
-
-3. **Install dependencies and build**:
-   ```bash
-   npm install
-   npx tsc
-   ```
-
-### Step 2: Install in LMStudio
-
-**This is the crucial step:**
+### One Command Setup
 
 ```bash
-# Copy the plugin directly to LMStudio's extensions folder
+# After cloning, just run:
+./setup.sh
+```
+
+That's it! The script will:
+1. Ask for your API key
+2. Install everything automatically
+3. Start the plugin for you (optional)
+
+Follow the instructions at the end.
+
+### Manual Installation (if setup.sh doesn't work)
+
+<details>
+<summary>Click for manual steps</summary>
+
+```bash
+# 1. Clone repository
+git clone [repository-url]
+cd valyu
+
+# 2. Add your API key
+echo "VALYU_API_KEY=your_key_here" > .env
+
+# 3. Build and install
+npm install
+npx tsc
 cp -r . ~/.lmstudio/extensions/plugins/lmstudio/valyu
+
+# 4. Run plugin server (keep running!)
+cd ~/.lmstudio/extensions/plugins/lmstudio/valyu
+lms dev
 ```
 
-### Step 3: Activate in LMStudio
+</details>
 
-1. **Open LMStudio** (no restart needed!)
-2. Navigate to **Integrations** (⚡ icon)
-3. Find **"valyu"** in the plugins list
-4. **Toggle it ON** using the switch
-5. The plugin is now active!
+## 📝 Usage
 
-## 📝 How to Use
+Once installed and running, your LLM can:
 
-Once enabled, your LLM can use two powerful tools:
-
-### DeepSearch Examples
-
+### Search the web
 ```
-Search for recent developments in quantum computing using valyu_deepsearch
+Use valyu_deepsearch to find recent news about artificial intelligence
 ```
 
+### Extract content from URLs
 ```
-Use valyu_deepsearch with search_type="proprietary" to find academic papers about machine learning
-```
-
-```
-Find information about Apple's latest earnings using valyu_deepsearch
+Use valyu_contents to get the full content from https://example.com
 ```
 
-### Contents Extraction Examples
+## ❓ Troubleshooting
 
-```
-Use valyu_contents to extract the full article from https://techcrunch.com/[article-url]
-```
+**Plugin not showing?**
+- Make sure `lms dev` is running in a terminal
+- Check Integrations panel (⚡ icon) in LMStudio
 
-```
-Get the content from this URL using valyu_contents: [paste any URL]
-```
+**API key error?**
+- Ensure `.env` file exists in the plugin folder with your key
+- Get a key at [platform.valyu.network](https://platform.valyu.network/)
 
-## 🔧 Development Mode
+## 📚 What This Plugin Does
 
-For active development with hot-reload:
+- **DeepSearch**: Search web, academic papers, financial data
+- **Contents**: Extract full content from any webpage
+- **No truncation**: Full content retrieval, not just snippets
 
-1. Navigate to the plugin directory:
-   ```bash
-   cd /path/to/valyu
-   ```
-
-2. Start development mode:
-   ```bash
-   lms dev
-   # or
-   npm run dev
-   ```
-
-3. Make your changes - they'll auto-reload
-4. Copy to LMStudio's folder when done:
-   ```bash
-   cp -r . ~/.lmstudio/extensions/plugins/lmstudio/valyu
-   ```
-
-## 📁 Project Structure
-
-```
-valyu/
-├── .env.example          # Example environment variables
-├── README.md            # This file
-├── TESTING.md           # Detailed testing guide
-├── manifest.json        # Plugin metadata
-├── package.json         # Node dependencies
-├── tsconfig.json        # TypeScript configuration
-├── src/
-│   ├── index.ts         # Plugin entry point
-│   ├── configSchematics.ts  # Configuration schema
-│   └── toolsProvider.ts     # Valyu API integration
-└── dist/                # Compiled JavaScript (auto-generated)
-```
-
-## ⚙️ Configuration
-
-### Environment Variables (`.env` file)
-```bash
-VALYU_API_KEY=your_api_key_here
-```
-
-### Plugin Settings in LMStudio
-- **API Key**: Your Valyu authentication key
-- **Base URL**: API endpoint (default: https://api.valyu.network)
-- **Max Results**: Maximum search results (default: 10)
-- **Relevance Threshold**: Minimum relevance score (0.0-1.0, default: 0.5)
-
-## 🎯 Pro Tips
-
-1. **API Key Setup**: The plugin automatically reads from the `.env` file in the parent directory
-2. **No Beta Access Needed**: Direct copy method bypasses plugin beta requirements
-3. **Hot Reload**: Use `lms dev` during development for instant updates
-4. **Chain Operations**: Models can chain searches and content extraction for comprehensive research
-
-## 🔍 Example Workflow
-
-```
-User: "Research the latest developments in AI safety and give me detailed information"
-
-Assistant uses:
-1. valyu_deepsearch("AI safety developments 2025")
-2. Gets list of relevant URLs
-3. valyu_contents(["url1", "url2", "url3"])
-4. Analyzes full content and provides comprehensive answer
-```
-
-## 🐛 Troubleshooting
-
-### Plugin Not Showing?
-- Ensure it's copied to: `~/.lmstudio/extensions/plugins/lmstudio/valyu`
-- Check the Integrations panel
-- No restart required after copying!
-
-### API Errors?
-- Verify your API key is correct
-- Check credits at [platform.valyu.network](https://platform.valyu.network)
-- Test API directly:
-  ```bash
-  curl -X POST https://api.valyu.network/v1/deepsearch \
-    -H "x-api-key: YOUR_KEY" \
-    -H "Content-Type: application/json" \
-    -d '{"query": "test", "search_type": "web"}'
-  ```
-
-### Tools Not Working?
-- Ensure plugin toggle is ON
-- Try: "Use valyu_deepsearch to search for 'test'"
-- Verify model supports tool calling
-
-## 📊 API Limits & Pricing
-
-- **Free Tier**: 1000+ queries included
-- **No Credit Card**: Required to start
-- **Monitor Usage**: Check at [platform.valyu.network](https://platform.valyu.network)
-- **Pay-per-use**: For additional usage beyond free tier
-
-## 🎉 Success Checklist
-
-✅ Plugin appears in Integrations list
-✅ Toggle switch is available and ON
-✅ Model responds to valyu_deepsearch requests
-✅ Model can extract content with valyu_contents
-✅ No errors in responses
-
-## 💡 Quick Test
-
-After setup, try this in chat:
-```
-Use valyu_deepsearch to find information about "artificial intelligence news today"
-```
-
-If you get search results back, everything is working!
-
-## 🔗 Resources
-
-- **LMStudio**: [lmstudio.ai](https://lmstudio.ai/)
-- **Valyu Platform**: [platform.valyu.network](https://platform.valyu.network/)
-- **Valyu Documentation**: [docs.valyu.network](https://docs.valyu.network/)
-- **Support**: File issues in this repository
-
-## 📜 License
+## License
 
 ISC
-
----
-
-**Version:** 1.0.0
-**Created by:** Valyu Plugin Development Team
-**Powered by:** [Valyu API](https://valyu.network/) & [LMStudio](https://lmstudio.ai/)
