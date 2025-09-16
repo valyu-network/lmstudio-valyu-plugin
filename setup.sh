@@ -51,18 +51,74 @@ if [ ! -f ".env" ]; then
     echo -e "${GREEN}✓ Created .env file with API key${NC}"
 fi
 
-# Step 3: Install dependencies
+# Step 3: Check for required tools
 echo ""
+echo -e "${YELLOW}→ Checking dependencies...${NC}"
+
+# Check for Node.js
+if ! command -v node &> /dev/null; then
+    echo -e "${RED}❌ Node.js is not installed. Please install Node.js first.${NC}"
+    exit 1
+fi
+
+# Check for npm
+if ! command -v npm &> /dev/null; then
+    echo -e "${RED}❌ npm is not installed. Please install npm first.${NC}"
+    exit 1
+fi
+
+# Find LMStudio CLI
+LMS_PATH=""
+if command -v lms &> /dev/null; then
+    LMS_PATH="lms"
+elif [ -f "$HOME/.lmstudio/bin/lms" ]; then
+    LMS_PATH="$HOME/.lmstudio/bin/lms"
+elif [ -f "/Applications/LMStudio.app/Contents/Resources/lms" ]; then
+    LMS_PATH="/Applications/LMStudio.app/Contents/Resources/lms"
+else
+    echo -e "${RED}❌ LMStudio CLI (lms) not found. Please ensure LMStudio is installed.${NC}"
+    echo "   Expected locations:"
+    echo "   - $HOME/.lmstudio/bin/lms"
+    echo "   - /Applications/LMStudio.app/Contents/Resources/lms"
+    exit 1
+fi
+
+echo -e "${GREEN}✓ Found LMStudio CLI at: $LMS_PATH${NC}"
+
+# Step 4: Install dependencies
 echo -e "${YELLOW}→ Installing dependencies...${NC}"
 npm install > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo -e "${RED}❌ Failed to install dependencies${NC}"
+    echo "Running npm install with verbose output:"
+    npm install
+    exit 1
+fi
 echo -e "${GREEN}✓ Dependencies installed${NC}"
 
-# Step 4: Build TypeScript
+# Step 5: Install TypeScript if not available
+if ! npm list typescript &> /dev/null && ! command -v tsc &> /dev/null; then
+    echo -e "${YELLOW}→ Installing TypeScript...${NC}"
+    npm install --save-dev typescript > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo -e "${RED}❌ Failed to install TypeScript${NC}"
+        exit 1
+    fi
+    echo -e "${GREEN}✓ TypeScript installed${NC}"
+fi
+
+# Step 6: Build TypeScript
 echo -e "${YELLOW}→ Building plugin...${NC}"
 npx tsc > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo -e "${RED}❌ TypeScript compilation failed${NC}"
+    echo "Running TypeScript compilation with verbose output:"
+    npx tsc
+    exit 1
+fi
 echo -e "${GREEN}✓ Plugin built successfully${NC}"
 
-# Step 5: Copy to LMStudio
+# Step 7: Copy to LMStudio
 PLUGIN_DIR="$HOME/.lmstudio/extensions/plugins/lmstudio/valyu"
 
 # Remove old installation if exists
@@ -73,21 +129,38 @@ fi
 
 echo -e "${YELLOW}→ Installing plugin to LMStudio...${NC}"
 mkdir -p "$(dirname "$PLUGIN_DIR")"
-cp -r . "$PLUGIN_DIR"
 
-# Step 6: Build in LMStudio directory
+# Copy files excluding node_modules and dist directories to avoid conflicts
+if command -v rsync &> /dev/null; then
+    rsync -av --exclude='node_modules' --exclude='dist' --exclude='.git' . "$PLUGIN_DIR" > /dev/null 2>&1
+else
+    # Fallback: copy everything then remove problematic directories
+    cp -r . "$PLUGIN_DIR"
+    rm -rf "$PLUGIN_DIR/node_modules" "$PLUGIN_DIR/dist" "$PLUGIN_DIR/.git"
+fi
+
+# Step 8: Build in LMStudio directory
 cd "$PLUGIN_DIR"
 echo -e "${YELLOW}→ Finalizing installation...${NC}"
 npm install > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo -e "${RED}❌ Failed to install dependencies in plugin directory${NC}"
+    exit 1
+fi
+
 npx tsc > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo -e "${RED}❌ Failed to build plugin in installation directory${NC}"
+    exit 1
+fi
 echo -e "${GREEN}✓ Plugin installed to LMStudio${NC}"
 
-# Step 7: Create a run script
+# Step 9: Create a run script
 RUN_SCRIPT="$HOME/.lmstudio/run-valyu-plugin.sh"
-cat > "$RUN_SCRIPT" << 'EOF'
+cat > "$RUN_SCRIPT" << EOF
 #!/bin/bash
 cd ~/.lmstudio/extensions/plugins/lmstudio/valyu
-lms dev
+"$LMS_PATH" dev
 EOF
 chmod +x "$RUN_SCRIPT"
 
@@ -121,5 +194,5 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Press Ctrl+C to stop the server"
     echo ""
     cd "$PLUGIN_DIR"
-    lms dev
+    "$LMS_PATH" dev
 fi
