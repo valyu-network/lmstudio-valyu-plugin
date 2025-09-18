@@ -101,12 +101,15 @@ export async function toolsProvider(ctl: ToolsProviderController) {
           // Handle content - it might be a string or an object (for financial data)
           let content = "";
 
-          if (result.content) {
+          if (result.content !== undefined && result.content !== null) {
             if (typeof result.content === 'string') {
               content = result.content;
             } else if (typeof result.content === 'object') {
               // For financial data or structured content, convert to JSON string
               content = JSON.stringify(result.content, null, 2);
+            } else {
+              // Handle primitive values like numbers for financial data (e.g., 22.4)
+              content = String(result.content);
             }
           } else {
             // Fallback to other fields if content is not available
