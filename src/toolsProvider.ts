@@ -5,7 +5,7 @@ import * as dotenv from "dotenv";
 import * as path from "path";
 
 // Load environment variables from the plugin root directory
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 interface DeepSearchResult {
   title: string;
@@ -50,10 +50,15 @@ export async function toolsProvider(ctl: ToolsProviderController) {
       The search supports various parameters to customize results:
       - query: Your search query
       - max_results: Number of results to return
+      
+      Fast mode can be enabled in plugin settings for quicker searches but smaller content.
     `,
     parameters: {
       query: z.string().describe("The search query"),
-      max_results: z.number().optional().describe("Maximum number of results to return (default: 10)"),
+      max_results: z
+        .number()
+        .optional()
+        .describe("Maximum number of results to return (default: 10)"),
     },
     implementation: async ({ query, max_results }, { warn }) => {
       if (!apiKey) {
@@ -66,7 +71,8 @@ export async function toolsProvider(ctl: ToolsProviderController) {
         const requestBody: any = {
           query,
           max_num_results: max_results || config.get("maxResults"),
-          response_length: "max"
+          response_length: "max",
+          fast_mode: config.get("fastMode"),
         };
 
         const response = await fetch(url.toString(), {
@@ -89,22 +95,23 @@ export async function toolsProvider(ctl: ToolsProviderController) {
         if (!data.results || data.results.length === 0) {
           return {
             message: "No results found for your query.",
-            suggestion: "Try different search terms or broaden your search type to 'all'."
+            suggestion:
+              "Try different search terms or broaden your search type to 'all'.",
           };
         }
 
         const results: DeepSearchResult[] = data.results.map((result: any) => {
           // Log to see what fields the API actually returns
-          console.log('Valyu API result fields:', Object.keys(result));
-          console.log('Content type from API:', typeof result.content);
+          console.log("Valyu API result fields:", Object.keys(result));
+          console.log("Content type from API:", typeof result.content);
 
           // Handle content - it might be a string or an object (for financial data)
           let content = "";
 
           if (result.content !== undefined && result.content !== null) {
-            if (typeof result.content === 'string') {
+            if (typeof result.content === "string") {
               content = result.content;
-            } else if (typeof result.content === 'object') {
+            } else if (typeof result.content === "object") {
               // For financial data or structured content, convert to JSON string
               content = JSON.stringify(result.content, null, 2);
             } else {
@@ -113,18 +120,24 @@ export async function toolsProvider(ctl: ToolsProviderController) {
             }
           } else {
             // Fallback to other fields if content is not available
-            content = result.text || result.snippet || result.description || result.full_text || result.body || "";
+            content =
+              result.text ||
+              result.snippet ||
+              result.description ||
+              result.full_text ||
+              result.body ||
+              "";
           }
 
           // Only check for truncation if content is a string
-          if (typeof content === 'string' && content.endsWith('...')) {
-            console.log('Note: Content was already truncated by Valyu API');
+          if (typeof content === "string" && content.endsWith("...")) {
+            console.log("Note: Content was already truncated by Valyu API");
           }
 
           return {
             title: result.title || "Untitled",
             url: result.url || "",
-            snippet: content,  // Will be string (either original or JSON stringified)
+            snippet: content, // Will be string (either original or JSON stringified)
             relevance_score: result.relevance_score,
             author: result.author,
             published_date: result.published_date,
@@ -162,7 +175,9 @@ export async function toolsProvider(ctl: ToolsProviderController) {
       - Support for various content types
     `,
     parameters: {
-      urls: z.array(z.string()).describe("Array of URLs to extract content from"),
+      urls: z
+        .array(z.string())
+        .describe("Array of URLs to extract content from"),
     },
     implementation: async ({ urls }, { warn }) => {
       if (!apiKey) {
@@ -184,7 +199,8 @@ export async function toolsProvider(ctl: ToolsProviderController) {
           },
           body: JSON.stringify({
             urls,
-            response_length: "max"
+            response_length: "max",
+            extract_effort: "auto",
           }),
         });
 
@@ -199,7 +215,7 @@ export async function toolsProvider(ctl: ToolsProviderController) {
         if (!data.contents || data.contents.length === 0) {
           return {
             message: "No content could be extracted from the provided URLs.",
-            suggestion: "Check if the URLs are valid and accessible."
+            suggestion: "Check if the URLs are valid and accessible.",
           };
         }
 

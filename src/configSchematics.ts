@@ -8,7 +8,7 @@ export const configSchematics = createConfigSchematics()
       displayName: "Valyu API Key",
       hint: "Your Valyu API key for accessing DeepSearch and Contents API. Get one at platform.valyu.network",
     },
-    process.env.VALYU_API_KEY || "",
+    process.env.VALYU_API_KEY || ""
   )
   .field(
     "valyuBaseUrl",
@@ -17,7 +17,7 @@ export const configSchematics = createConfigSchematics()
       displayName: "Valyu API Base URL",
       hint: "The base URL for the Valyu API.",
     },
-    "https://api.valyu.network",
+    "https://api.valyu.network"
   )
   .field(
     "maxResults",
@@ -26,7 +26,7 @@ export const configSchematics = createConfigSchematics()
       displayName: "Max Search Results",
       hint: "Maximum number of search results to return (default: 10)",
     },
-    10,
+    10
   )
   .field(
     "relevanceThreshold",
@@ -35,6 +35,15 @@ export const configSchematics = createConfigSchematics()
       displayName: "Relevance Threshold",
       hint: "Minimum relevance score for results (0.0-1.0)",
     },
-    0.5,
+    0.5
+  )
+  .field(
+    "fastMode",
+    "boolean",
+    {
+      displayName: "Fast Mode",
+      hint: "Enable fast mode for optimized search performance and faster response times but smaller content.",
+    },
+    false
   )
   .build();
