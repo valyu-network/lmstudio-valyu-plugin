@@ -10,12 +10,7 @@ An LM Studio plugin that lets your local assistant search the live web and pull 
 
 The plugin is available for download on the LM Studio Hub
 
-Click the "Run in LM Studio" button
-
-## Configuration
-
-**Valyu API Key**
-
+- Click the "Run in LM Studio" button
 - Create a free key at [platform.valyu.network](https://platform.valyu.network/) and update the key in the plugin settings.
 
 ## How to Use
