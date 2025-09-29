@@ -40,20 +40,6 @@ export async function toolsProvider(ctl: ToolsProviderController) {
       Search across web, academic papers, and financial data using Valyu's DeepSearch API.
       Returns comprehensive search results with full-text content, citations, and metadata.
 
-      Use this tool when you need:
-      - Academic research and papers
-      - Real-time web content
-      - Financial data and reports
-      - Fact-checking and verification
-      - Multi-modal content (text, images, tables)
-
-      The search supports various parameters to customize results:
-      - query: Your search query
-      - max_results: Number of results to return
-      
-      Response length and fast mode can be configured in plugin settings:
-      - Response Length: 'short' for smaller models, 'medium' for balanced output, 'max' for larger models
-      - Fast Mode: Enable for quicker searches but smaller content
     `,
     parameters: {
       query: z.string().describe("The search query"),
@@ -170,12 +156,6 @@ export async function toolsProvider(ctl: ToolsProviderController) {
       Use this tool when you need the COMPLETE full text of a specific webpage,
       for example if a user provides a URL, or if you know the URL of a webpage that will be used in the conversation.
 
-      Features:
-      - Full text extraction
-      - Metadata extraction (author, date, description)
-      - Clean, structured content
-      - Support for various content types
-      - Configurable response length (short/medium/max) for different model capabilities
     `,
     parameters: {
       urls: z
