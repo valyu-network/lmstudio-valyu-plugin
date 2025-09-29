@@ -46,4 +46,13 @@ export const configSchematics = createConfigSchematics()
     },
     false
   )
+  .field(
+    "responseLength",
+    "string",
+    {
+      displayName: "Response Length",
+      hint: "Control content length: 'short' for smaller models, 'medium' for balanced output, 'max' for larger models with high context limits",
+    },
+    "medium"
+  )
   .build();
