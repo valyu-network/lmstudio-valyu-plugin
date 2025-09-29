@@ -51,7 +51,9 @@ export async function toolsProvider(ctl: ToolsProviderController) {
       - query: Your search query
       - max_results: Number of results to return
       
-      Fast mode can be enabled in plugin settings for quicker searches but smaller content.
+      Response length and fast mode can be configured in plugin settings:
+      - Response Length: 'short' for smaller models, 'medium' for balanced output, 'max' for larger models
+      - Fast Mode: Enable for quicker searches but smaller content
     `,
     parameters: {
       query: z.string().describe("The search query"),
@@ -71,7 +73,7 @@ export async function toolsProvider(ctl: ToolsProviderController) {
         const requestBody: any = {
           query,
           max_num_results: max_results || config.get("maxResults"),
-          response_length: "max",
+          response_length: config.get("responseLength"),
           fast_mode: config.get("fastMode"),
         };
 
@@ -173,6 +175,7 @@ export async function toolsProvider(ctl: ToolsProviderController) {
       - Metadata extraction (author, date, description)
       - Clean, structured content
       - Support for various content types
+      - Configurable response length (short/medium/max) for different model capabilities
     `,
     parameters: {
       urls: z
@@ -189,7 +192,7 @@ export async function toolsProvider(ctl: ToolsProviderController) {
       }
 
       try {
-        const url = new URL(`${config.get("valyuBaseUrl")}/contents`);
+        const url = new URL(`${config.get("valyuBaseUrl")}/v1/contents`);
 
         const response = await fetch(url.toString(), {
           method: "POST",
@@ -199,7 +202,7 @@ export async function toolsProvider(ctl: ToolsProviderController) {
           },
           body: JSON.stringify({
             urls,
-            response_length: "max",
+            response_length: config.get("responseLength"),
             extract_effort: "auto",
           }),
         });
