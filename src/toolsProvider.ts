@@ -37,7 +37,7 @@ export async function toolsProvider(ctl: ToolsProviderController) {
   const deepSearchTool = tool({
     name: "valyu_deepsearch",
     description: text`
-      Search across web, academic papers, and financial data using Valyu's DeepSearch API.
+      Search across web, academic papers, and financial data using Valyu's DeepSearch API to get the most relevant and up to date information.
       Returns comprehensive search results with full-text content, citations, and metadata.
 
     `,
@@ -89,10 +89,6 @@ export async function toolsProvider(ctl: ToolsProviderController) {
         }
 
         const results: DeepSearchResult[] = data.results.map((result: any) => {
-          // Log to see what fields the API actually returns
-          console.log("Valyu API result fields:", Object.keys(result));
-          console.log("Content type from API:", typeof result.content);
-
           // Handle content - it might be a string or an object (for financial data)
           let content = "";
 
@@ -119,7 +115,7 @@ export async function toolsProvider(ctl: ToolsProviderController) {
 
           // Only check for truncation if content is a string
           if (typeof content === "string" && content.endsWith("...")) {
-            console.log("Note: Content was already truncated by Valyu API");
+            // Content was truncated by Valyu API
           }
 
           return {
@@ -195,17 +191,20 @@ export async function toolsProvider(ctl: ToolsProviderController) {
 
         const data = await response.json();
 
-        if (!data.contents || data.contents.length === 0) {
+        // Handle both old and new API response formats
+        const resultsArray = data.results || data.contents;
+
+        if (!resultsArray || resultsArray.length === 0) {
           return {
             message: "No content could be extracted from the provided URLs.",
             suggestion: "Check if the URLs are valid and accessible.",
           };
         }
 
-        const contents: ContentsResult[] = data.contents.map((item: any) => ({
+        const contents: ContentsResult[] = resultsArray.map((item: any) => ({
           url: item.url,
           title: item.title || "Untitled",
-          content: item.content || "",
+          content: item.content || item.text || item.body || "",
           metadata: {
             author: item.author,
             published_date: item.published_date,
