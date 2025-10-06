@@ -11,48 +11,41 @@ export const configSchematics = createConfigSchematics()
     process.env.VALYU_API_KEY || ""
   )
   .field(
-    "valyuBaseUrl",
-    "string",
-    {
-      displayName: "Valyu API Base URL",
-      hint: "The base URL for the Valyu API.",
-    },
-    "https://api.valyu.network"
-  )
-  .field(
     "maxResults",
     "numeric",
     {
       displayName: "Max Search Results",
-      hint: "Maximum number of search results to return (default: 10)",
+      hint: "Maximum number of search results to return: for smaller models, use 3-5, for larger models with better context windows, use 10-20 (default: 5)",
+      slider: {
+        min: 1,
+        max: 20,
+        step: 1,
+      },
+      int: true,
     },
-    10
+    5
   )
   .field(
-    "relevanceThreshold",
-    "numeric",
+    "responseLength",
+    "select",
     {
-      displayName: "Relevance Threshold",
-      hint: "Minimum relevance score for results (0.0-1.0)",
+      displayName: "Response Length",
+      hint: "Control content length: 'short' for smaller models, 'medium' for balanced output, 'max' for larger models with high context limits. (default: short)",
+      options: [
+        { value: "short", displayName: "Short" },
+        { value: "medium", displayName: "Medium" },
+        { value: "max", displayName: "Max" },
+      ],
     },
-    0.5
+    "short"
   )
   .field(
     "fastMode",
     "boolean",
     {
       displayName: "Fast Mode",
-      hint: "Enable fast mode for optimized search performance and faster response times but smaller content.",
+      hint: "Enable fast mode for faster response times but shoter, less detailed content. (default: false)",
     },
     false
-  )
-  .field(
-    "responseLength",
-    "string",
-    {
-      displayName: "Response Length",
-      hint: "Control content length: 'short' for smaller models, 'medium' for balanced output, 'max' for larger models with high context limits",
-    },
-    "medium"
   )
   .build();

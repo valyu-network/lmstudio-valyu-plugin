@@ -33,32 +33,28 @@ export async function toolsProvider(ctl: ToolsProviderController) {
 
   // Get API key from config or environment
   const apiKey = config.get("valyuApiKey") || process.env.VALYU_API_KEY;
+  const baseUrl = process.env.VALYU_BASE_URL || "https://api.valyu.network";
 
   const deepSearchTool = tool({
     name: "valyu_deepsearch",
     description: text`
       Search across web, academic papers, and financial data using Valyu's DeepSearch API to get the most relevant and up to date information.
       Returns comprehensive search results with full-text content, citations, and metadata.
-
     `,
     parameters: {
       query: z.string().describe("The search query"),
-      max_results: z
-        .number()
-        .optional()
-        .describe("Maximum number of results to return (default: 10)"),
     },
-    implementation: async ({ query, max_results }, { warn }) => {
+    implementation: async ({ query }, { warn }) => {
       if (!apiKey) {
         return "Error: Valyu API key not configured. Please set it in plugin settings.";
       }
 
       try {
-        const url = new URL(`${config.get("valyuBaseUrl")}/v1/deepsearch`);
+        const url = new URL(`${baseUrl}/v1/deepsearch`);
 
         const requestBody: any = {
           query,
-          max_num_results: max_results || config.get("maxResults"),
+          max_num_results: config.get("maxResults"),
           response_length: config.get("responseLength"),
           fast_mode: config.get("fastMode"),
         };
@@ -168,7 +164,7 @@ export async function toolsProvider(ctl: ToolsProviderController) {
       }
 
       try {
-        const url = new URL(`${config.get("valyuBaseUrl")}/v1/contents`);
+        const url = new URL(`${baseUrl}/v1/contents`);
 
         const response = await fetch(url.toString(), {
           method: "POST",
