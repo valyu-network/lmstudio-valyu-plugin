@@ -122,6 +122,8 @@ export async function toolsProvider(ctl: ToolsProviderController) {
             author: result.author,
             published_date: result.published_date,
             source: result.source,
+            doi: result.doi,
+            citation: result.citation,
           };
         });
 
