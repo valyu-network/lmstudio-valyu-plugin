@@ -120,7 +120,7 @@ export async function toolsProvider(ctl: ToolsProviderController) {
             snippet: content, // Will be string (either original or JSON stringified)
             relevance_score: result.relevance_score,
             author: result.author,
-            published_date: result.published_date,
+            published_date: result.publication_date,
             source: result.source,
             doi: result.doi,
             citation: result.citation,
