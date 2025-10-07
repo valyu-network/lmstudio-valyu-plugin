@@ -30,10 +30,11 @@ export const configSchematics = createConfigSchematics()
     "select",
     {
       displayName: "Response Length",
-      hint: "Control content length: 'short' for smaller models, 'medium' for balanced output, 'max' for larger models with high context limits. (default: short)",
+      hint: "Control content length: 'short' for smaller models, 'medium' for balanced output, 'long' for longer outputs, 'max' for models with high context limits. (default: short)",
       options: [
         { value: "short", displayName: "Short" },
         { value: "medium", displayName: "Medium" },
+        { value: "long", displayName: "Long" },
         { value: "max", displayName: "Max" },
       ],
     },
@@ -45,6 +46,15 @@ export const configSchematics = createConfigSchematics()
     {
       displayName: "Fast Mode",
       hint: "Enable fast mode for faster response times but shoter, less detailed content. (default: false)",
+    },
+    false
+  )
+  .field(
+    "summary",
+    "boolean",
+    {
+      displayName: "Summary Mode",
+      hint: "Get summarized responses instead of raw search results. Returns a single coherent answer rather than multiple search results. Good for smaller models which struggle with longer context. (default: false)",
     },
     false
   )
