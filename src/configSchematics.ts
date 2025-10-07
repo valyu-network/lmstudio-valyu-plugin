@@ -11,6 +11,20 @@ export const configSchematics = createConfigSchematics()
     process.env.VALYU_API_KEY || ""
   )
   .field(
+    "searchType",
+    "select",
+    {
+      displayName: "Search Type",
+      hint: "Select the type of search to perform. General for general web search, Academic for academic papers, Financial for financial data. (default: General)",
+      options: [
+        { value: "general", displayName: "General" },
+        { value: "academic", displayName: "Academic" },
+        { value: "financial", displayName: "Financial" },
+      ],
+    },
+    "general"
+  )
+  .field(
     "maxResults",
     "numeric",
     {

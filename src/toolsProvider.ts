@@ -93,6 +93,18 @@ export async function toolsProvider(ctl: ToolsProviderController) {
       if (!apiKey) {
         return "Error: Valyu API key not configured. Please set it in plugin settings.";
       }
+      const searchType = config.get("searchType");
+      let searchTypeValue: string | any[] | undefined = [];
+      if (searchType === "academic") {
+        searchTypeValue = [
+          "valyu/valyu-pubmed",
+          "valyu/valyu-clinical-trials",
+          "valyu/valyu-arxiv",
+          "wiley/wiley-finance-papers",
+        ];
+      } else if (searchType === "financial") {
+        searchTypeValue = ["finance"];
+      }
 
       try {
         // Check if summary mode is enabled
@@ -108,6 +120,10 @@ export async function toolsProvider(ctl: ToolsProviderController) {
             search_type: "all",
             data_max_price: 100,
           };
+
+          if (searchTypeValue && searchTypeValue.length > 0) {
+            requestBody.included_sources = searchTypeValue;
+          }
 
           const response = await fetch(url.toString(), {
             method: "POST",
@@ -160,6 +176,9 @@ export async function toolsProvider(ctl: ToolsProviderController) {
             fast_mode: config.get("fastMode"),
             max_price: 100,
           };
+          if (searchTypeValue && searchTypeValue.length > 0) {
+            requestBody.included_sources = searchTypeValue;
+          }
 
           const response = await fetch(url.toString(), {
             method: "POST",
