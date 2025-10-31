@@ -20,6 +20,18 @@ With the plugin enabled, ask your assistant to:
 - "Use `valyu_deepsearch` to find the latest earnings news for Apple."
 - "Use `valyu_contents` to fetch the full article from https://example.com."
 
+## Recommended Models
+
+The following model families have been tested and work well with tool calling:
+
+- **Qwen**
+- **Gemma**
+- **Granite**
+
+## Known Issues
+
+- **gpt-oss and smaller LLMs**: These models are known to have issues with tool calling or processing search results, causing them to call search tools in a loop repeatedly despite being given the right context. If you encounter this issue, we recommend using larger or more capable models.
+
 ## License
 
 ISC
